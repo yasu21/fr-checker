@@ -1,5 +1,8 @@
 # FR-checker
 
+Compare Funding rate data
+https://rdk.me/fr/
+
 ## Project setup
 ```
 npm install
