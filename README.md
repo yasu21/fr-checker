@@ -3,6 +3,9 @@
 Compare Funding rate data
 https://rdk.me/fr/
 
+front end: vue.js html css
+back end: php mysql
+
 ## Project setup
 ```
 npm install
