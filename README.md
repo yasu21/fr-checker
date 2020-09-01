@@ -1,4 +1,4 @@
-# FR-checker
+# test
 
 ## Project setup
 ```

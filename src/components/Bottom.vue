@@ -2,8 +2,8 @@
 <v-bottom-navigation
     :value="activeBtn"
     grow
-    color="#2196f3"
-    background-color="#505050"
+    color="#fff"
+    background-color="bar"
   >
     <v-btn
     href="https://ftx.com/#a=signapp"

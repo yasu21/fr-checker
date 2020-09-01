@@ -1,15 +1,23 @@
 <template>
 <div id=data-tbl>
 
-  <v-card max-width="70%" class="mx-auto" raised v-if="error">
+  <v-card max-width="90%" height="600px" class="mx-auto" raised v-if="error">
       <v-card-title>Error Try Again</v-card-title>
+        <div class="APIcall_container">
+          <v-btn
+          color="primary"
+          @click="exe(0)"
+          width="247px"
+          height="50px"
+          class="font-weight-bold float-right"
+          :disabled="wait">
+          <v-icon left>mdi-refresh-circle</v-icon> Reload</v-btn>
+          </div>
   </v-card>
 
   <v-card max-width="90%" class="mx-auto" raised v-else>
-    <v-card-title>
-      FTX-Funding Rate Data
+      <v-card-title>FTX-Funding Rate Data</v-card-title>
       <v-spacer></v-spacer>
-      </v-card-title>
 
     <div class="ore">
       <OreChart :chart-data="datacollection" :options="options"/>
@@ -31,30 +39,56 @@
         hide-details
         ></v-text-field>
         <v-spacer></v-spacer>
-        <div class="APIcall_container">
+        <div class="APIcall_container pc600">
           <v-btn
           color="primary"
           @click="exe(1)"
-          width="170px"
+          width="247px"
           height="50px"
           class="font-weight-bold float-right"
           :disabled="wait">
-          <v-icon left>mdi-refresh-circle</v-icon> Refresh</v-btn>
+          <v-icon left>mdi-refresh-circle</v-icon> Reload
+          </v-btn>
           </div>
-          <div class="sp">
-            <span class="green2"><v-icon small>mdi-arrow-up</v-icon>Low to High</span>
-            <span class="red2"><v-icon small>mdi-arrow-down</v-icon>High to Low</span>
+
+          <div class="sp600">
+            <v-row justify="center">
+              <v-col>
+          <v-btn
+          color="primary"
+          @click="exe(1)"
+          height="40px"
+          class="font-weight-bold float-right"
+          :disabled="wait"
+          block>
+          <v-icon left>mdi-refresh-circle</v-icon> Reload
+          </v-btn>
+              </v-col>
+              <v-col>
+            <v-btn
+            color="#ee6560"
+            @click="switchon"
+            class="font-weight-bold"
+            block
+            height="40px"
+            >
+            <v-icon small>mdi-arrow-up</v-icon>
+            <v-icon small left>mdi-arrow-down</v-icon>
+            Switch DESC and ASC</v-btn>
+              </v-col>
+            </v-row>
           </div>
+
       </v-card-title>
 <Loading class="loading" v-show="loadProgress"></Loading>
     <v-data-table
     :sort-by="sortBy"
-    :items-per-page=15
+    :items-per-page=10
     :headers="headers"
     :items="rate_data"
     :search="search"
     fixed-header
-    height="600px"
+    height="auto"
     class="elevation-1"
     :single-select="singleSelect"
     v-model="selected"
@@ -131,8 +165,10 @@ export default {
         }
       })
       .catch(error => {
-        console.log(error)
-        this.error = true
+        console.log(error);
+        this.wait = false
+        this.loadProgress=false;
+        this.error = true;
       })
 
       window.scrollTo(0,50);
@@ -148,6 +184,7 @@ export default {
       setTimeout(() => (this.wait = false), 1000);
     },
     fillData() {
+      window.scrollTo(0,50);
       this.datacollection = {
         labels: this.pair_range,
         datasets: [
@@ -206,6 +243,11 @@ export default {
           ]
         }
       }
+    },
+    switchon(){
+      var tgt=document.getElementsByClassName("v-chip__content");
+      console.log(tgt)
+      tgt[0].click();
     }
   },
   mounted(){
@@ -213,7 +255,14 @@ export default {
     //this.fillData();
   },
   computed:{
-    pair_name(){return this.selected[0]["name"];},
+    pair_name(){
+      var pair=this.selected;
+      if(!pair.length){
+        return "Please Select Pair";
+      }else{
+        return this.selected[0]["name"];
+      }
+      },
     pair_rate(){return this.selected[0]["rate"];},
     pair_range(){
       var count=this.selected[0]["rate"].length;
@@ -252,7 +301,7 @@ export default {
   }
 
 #data-tbl{
-  padding-bottom: 100px;
+  padding-bottom: 70px;
 }
 
 #data-tbl table th{
@@ -279,8 +328,8 @@ export default {
 }
 
 #line-chart{
-  width:90% !important;
-  height: 400px !important;
+  width:95% !important;
+  height: 320px !important;
   margin: 0 auto;
 }
 
@@ -318,7 +367,8 @@ export default {
 
 @media screen and (max-width:779px) {
   #line-chart{
-  width:95% !important;
+  width:97% !important;
+  height: 250px !important;
   }
   .v-card{
     max-width: 95% !important;
@@ -338,12 +388,76 @@ export default {
 
 @media screen and (max-width:599px) {
 #data-tbl table td:nth-child(1),#data-tbl table td:nth-child(2){
-  background: #505050;
+  background: #253445 !important;
+  position: relative;
 }
+
+#data-tbl table td:nth-child(1) .v-data-table__mobile-row__cell::before{
+  content: "Show Chart";
+  position: absolute;
+  top: 14px;
+  right: 30px;
+  z-index: 7;
+}
+
+
+#data-tbl table td:nth-child(2) .v-data-table__mobile-row__header{
+  display: none;
+}
+
+#data-tbl table td:nth-child(2) .v-data-table__mobile-row__cell{
+  position: absolute;
+  top:-15px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+#data-tbl .v-data-table .v-data-table__mobile-row {
+    height: initial;
+    min-height: 27px;
+}
+
+#data-tbl .v-simple-checkbox {
+  position: absolute;
+  top:10px;
+  right:110px;
+  z-index:7;
+
+}
+
 #data-tbl{
-  padding-bottom: 80px;
+  padding-bottom: 70px;
+}
+
+.theme--dark.v-list {
+    background: #505050 !important;
+}
+
+.pc600{
+  display: none;
+}
+
+.sp600{
+    width: 90%;
+    margin: 0 auto;
 }
 }
+
+@media screen and (min-width:600px) {
+  .sp600{
+    display: none;
+  }
+
+  .v-data-table-header th:nth-child(1){
+    width: 35px !important;
+    padding: 0 0 0 5px !important;
+    }
+
+  .v-data-table-header th:nth-child(1)::after{
+    content:"Chart"
+  }
+}
+
 @media screen and (max-width:480px) {
 .APIcall_container{
   margin-left: 10px;
