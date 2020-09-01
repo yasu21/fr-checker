@@ -265,7 +265,7 @@ export default {
       },
     pair_rate(){return this.selected[0]["rate"];},
     pair_range(){
-      var count=this.selected[0]["rate"].length;
+      var count=this.selected[0]["rate"].length+1;
       var range = [];
       for (let i = 1; i < count; i++) {
         range.push("-"+i+"h");
