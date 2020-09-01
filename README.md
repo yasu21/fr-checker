@@ -1,4 +1,4 @@
-# test
+# FR Checker
 
 Compare Funding rate data
 https://rdk.me/fr/
