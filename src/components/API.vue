@@ -156,7 +156,6 @@ export default {
       this.$emit("loadStart")
       this.loadProgress=true;
       var url=this.resurl;
-      alert(url);
       await axios.get(url)
       .then(response => {
         this.get = response.data,
