@@ -17,6 +17,13 @@
       <v-icon>mdi-arrow-up</v-icon>
     </v-btn>
 
+   <v-btn
+   href="https://forms.gle/ZappBKeuRckRbNLW9"
+  target="_blank">
+      <span>Contact</span>
+      <v-icon>mdi-email-send</v-icon>
+    </v-btn>
+
   </v-bottom-navigation>
 </template>
 

@@ -1,6 +1,6 @@
 module.exports = {
   "pwa": {
-    "name": "FR!!"
+    "name": "FR Checker"
   },
 
   "transpileDependencies": [
@@ -11,7 +11,17 @@ module.exports = {
 
   pwa: {
     name: 'FR Checker'
-  }
+  },
+  configureWebpack: {
+    module: {
+        rules: [
+            {
+                test: /.csv$/,
+                loader: 'csv-loader'
+            }
+        ]
+    }
+}
 }
 
 

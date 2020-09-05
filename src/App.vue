@@ -125,7 +125,7 @@ h1{
 .sp-btm{
   position: fixed;
   bottom: 0;
-  z-index: 100;
+  z-index: 7;
   width: 100%;
 }
 
@@ -162,7 +162,7 @@ h1{
 .sp-btm{
   position: fixed;
   bottom: 0;
-  z-index: 100;
+  z-index: 7;
   width: 100%;
 }
 

@@ -1,6 +1,5 @@
 <template>
 <div id=data-tbl>
-
   <v-card max-width="90%" height="600px" class="mx-auto" raised v-if="error">
       <v-card-title>Error Try Again</v-card-title>
         <div class="APIcall_container">
@@ -37,6 +36,7 @@
         label="Search"
         single-line
         hide-details
+        clearable
         ></v-text-field>
         <v-spacer></v-spacer>
         <div class="APIcall_container pc600">
@@ -106,12 +106,14 @@
 import axios from "axios"
 import Loading from '@/components/Loading';
 import OreChart from "./OreChart.js";
+import apiurl from "@/assets/apiurl.csv";
 
 export default {
   name:"API",
   data() {
     return {
       search: '',
+      resurl:"",
       headers: [
         {
           text: 'Pair',
@@ -120,10 +122,10 @@ export default {
           value: 'name',
         },
         { text: 'Next', value: 'next' },
-        { text: '24h Sum', value: '1d_sum' },
+        { text: '8h Sum', value: 'h8_sum' },
         { text: '24h Avg', value: '1d_avg' },
-        { text: '3days Sum', value: '3d_sum' },
         { text: '3days Avg', value: '3d_avg' },
+        { text: '7days Avg', value: '7d_avg' },
         ],
       loadProgress:false,
       rate_data:[],
@@ -153,7 +155,8 @@ export default {
       // $emit >> 任意のタイミングでイベントを発生させる
       this.$emit("loadStart")
       this.loadProgress=true;
-      var url='api';
+      var url=this.resurl;
+      alert(url);
       await axios.get(url)
       .then(response => {
         this.get = response.data,
@@ -219,6 +222,7 @@ export default {
             {
               gridLines: {
                 color:"#303030",
+                zeroLineColor: "#7a7a7a"
               },
               ticks: {
                 beginAtZero: false,
@@ -231,13 +235,14 @@ export default {
           xAxes: [
             {
               gridLines: {
-                display:false,
+                display:true,
                 color:"#303030"
               },
               ticks: {
                 fontColor:"#fff",
                 borderColor:"#303030",
                 color:"#fff",
+                maxTicksLimit:7
               }
             }
           ]
@@ -248,11 +253,14 @@ export default {
       var tgt=document.getElementsByClassName("v-chip__content");
       console.log(tgt)
       tgt[0].click();
-    }
+    },
+    convertCsvStringToArray(str) {
+      return str.split("\n").map(s => s.split(","));
+      }
   },
+  created(){this.resurl=apiurl[0][0];},
   mounted(){
     this.exe(0);
-    //this.fillData();
   },
   computed:{
     pair_name(){
@@ -271,6 +279,7 @@ export default {
         range.push("-"+i+"h");
         }
       var range1 = range.reverse();
+
       return range1;
       }
 
