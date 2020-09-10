@@ -2,6 +2,8 @@
 
 Cryptocurrency exchange "FTX" Funding Rate record, comparison, chart display
 
+URL:https://rdk.me/fr/
+
 FrontEnd:
 Veu.js HTML CSS
 
