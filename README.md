@@ -1,4 +1,12 @@
-# test
+# FR　Checer
+
+Cryptocurrency exchange "FTX" Funding Rate record, comparison, chart display
+
+FrontEnd:
+Veu.js HTML CSS
+
+Backend:
+PHP(API) MySql(DB)
 
 ## Project setup
 ```
