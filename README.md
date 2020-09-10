@@ -1,4 +1,4 @@
-# FR　Checer
+# FR Checker
 
 Cryptocurrency exchange "FTX" Funding Rate record, comparison, chart display
 
