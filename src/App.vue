@@ -2,76 +2,61 @@
 <div id="app">
   <v-app>
     <v-toolbar height="45px" color="bar">
-      <v-toolbar-title><h1>FR Checker <i class="fas fa-chart-line"></i></h1></v-toolbar-title>
+      <v-toolbar-title>
+        <h1>FR Checker <i class="fas fa-chart-line"></i></h1>
+      </v-toolbar-title>
+      <v-spacer></v-spacer>
       <v-spacer></v-spacer>
 
-      <v-btn
-        href="https://twitter.com/crptVaper"
-        target="_blank"
-        icon
-        color="fff"
-      >
-      <i class="fab fa-twitter-square fa-2x"></i>
+      <v-btn href="https://twitter.com/crptVaper" target="_blank" icon color="fff">
+        <i class="fab fa-twitter-square fa-2x"></i>
       </v-btn>
 
-      <v-btn
-        href="https://github.com/yasu21/fr-checker"
-        target="_blank"
-        icon
-        color="#fff"
-      >
-      <i class="fab fa-github-square fa-2x"></i>
+      <v-btn href="https://github.com/yasu21/fr-checker" target="_blank" icon color="#fff">
+        <i class="fab fa-github-square fa-2x"></i>
       </v-btn>
 
-      <v-btn
-        icon
-        color="#fff"
-        @click="openm"
-      >
-      <i class="fas fa-donate fa-2x"></i>
+      <v-btn icon color="#fff" @click="openm">
+        <i class="fas fa-donate fa-2x"></i>
       </v-btn>
     </v-toolbar>
 
     <v-main>
+      <div v-if="modal" class="over">
+        <div class="content-m text-center">
+          <h3>Thank you for your donation!!</h3>
+          <p class="mt-3">ETH/ERC20/BEP20:</p>
+          <v-img
+          max-width="250px"
+          class="mx-auto"
+          src="@/assets/sample.png"
+          ></v-img>
+          <img >
 
-    <div v-if="modal" class="over">
-      <div class="content-m">
-        <h3>Thank you for your donation!!</h3>
-        
-        <p class="mt-3">ETH/erc20 : 
-          0x7c3d897A5b1144af267A7ff92208dbDebB5be991</p>
+          <p>0x7600892677CbB927260fD100815963F043F39f08</p>
 
-        <div class="text-center">
-        <v-btn @click="closem" color="bar" class="my-4" dark>close</v-btn>
+          <div class="text-center">
+            <v-btn @click="closem" color="bar" class="my-4" dark>close</v-btn>
+          </div>
         </div>
-    </div>
-    </div>
+      </div>
 
-      <API/>
+        <v-tabs align-with-title
+        v-model="tab"
+        color="#fff"
+        background-color="bar">
+          <v-tab>FTX-FR</v-tab>
+          <v-tab>Basis & FR</v-tab>
+        </v-tabs>
+
+      <API_copy v-if="test==true"></API_copy>
+      <API v-show="tab==0"></API>
+      <Basis v-show="tab==1"></Basis>
     </v-main>
 
-    <div class="bottom-v">
-    <v-btn
-    color="#ee6560"
-    raised
-    class="white--text ftx"
-    width="100px" height="50px"
-    href="https://ftx.com/#a=signapp"
-    target="_blank">
-    <v-icon left dark>mdi-open-in-new </v-icon> Go FTX
-    </v-btn>
 
-    <v-btn
-    color="#4db872"
-    fab
-    class="white--text"
-    @click="up">
-    <v-icon>mdi-arrow-up</v-icon>
-    </v-btn>
-
-    </div>
-    <div class="sp-btm">
-      <Bottom/>
+    <div class="sp-btm sp600">
+      <Bottom />
     </div>
   </v-app>
 </div>
@@ -79,34 +64,40 @@
 
 <script>
 import API from './components/API';
+import API_copy from './components/API_copy';
 import Bottom from './components/Bottom';
+import Basis from '@/components/Basis';
 export default {
   name: 'App',
 
   components: {
     API,
-    Bottom
+    Bottom,
+    API_copy,
+    Basis
   },
-  methods:{
-    up(){
-      window.scrollTo(0,0);
-    },
-    openm(){
-      this.modal=true;
-    },
-    closem(){
-      this.modal=false;
+  data() {
+    return {
+      modal: false,
+      test: false,
+      tab:""
     }
   },
-  data(){
-    return{
-     modal:false,
+  methods: {
+    up() {
+      window.scrollTo(0, 0);
+    },
+    openm() {
+      this.modal = true;
+    },
+    closem() {
+      this.modal = false;
     }
-  }
+  },
 };
 </script>
 <style>
-.bottom-v{
+.bottom-v {
   position: fixed;
   bottom: 20px;
   right: 50%;
@@ -114,36 +105,37 @@ export default {
   display: none;
 }
 
-.ftx{
+.ftx {
   margin-right: 10px;
 }
 
-h1{
+h1 {
   font-size: 28px;
 }
 
-.sp-btm{
+.sp-btm {
   position: fixed;
   bottom: 0;
   z-index: 7;
   width: 100%;
 }
 
-.over{
-  z-index:1000;
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background-color:rgba(0,0,0,0.5);
+.over {
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.content-m{
-  background:#fafafa;
-  width:50%;
+
+.content-m {
+  background: #fafafa;
+  width: 50%;
   z-index: 1100;
   color: #666;
   padding: 10px;
@@ -151,30 +143,40 @@ h1{
   word-break: break-word;
 }
 
+#app .v-application{
+  font-family: 'Roboto','Avenir','Helvetica Neue','Helvetica','Arial','Hiragino Sans','ヒラギノ角ゴシック',YuGothic,'Yu Gothic','メイリオ', Meiryo,'ＭＳ Ｐゴシック','MS PGothic' !important;
+  }
+
 @media screen and (max-width:1000px) {
-.content-m{
-  background:#fafafa;
-  width:90%;}
+  .content-m {
+    background: #fafafa;
+    width: 90%;
+  }
 }
 
 @media screen and (max-width:599px) {
-.bottom-v{display: none;}
-.sp-btm{
-  position: fixed;
-  bottom: 0;
-  z-index: 7;
-  width: 100%;
-}
+  .bottom-v {
+    display: none;
+  }
+
+  .sp-btm {
+    position: fixed;
+    bottom: 0;
+    z-index: 7;
+    width: 100%;
+  }
 
 
-h1{
-  font-size: 24px;
-}
+  h1 {
+    font-size: 24px;
+  }
 
 }
 
 @media screen and (min-width:600px) {
-.sp-b{display: none;}
+  .sp-b {
+    display: none;
+  }
 }
 </style>
 
