@@ -3,7 +3,7 @@
   <v-card max-width="90%" height="600px" class="mx-auto" raised v-if="error">
     <v-card-title>Error Try Again</v-card-title>
     <div class="APIcall_container">
-      <v-btn color="primary" @click="exe(0)" width="247px" height="50px" class="font-weight-bold float-right"
+      <v-btn color="primary" @click="exe" width="247px" height="50px" class="font-weight-bold float-right"
         :disabled="wait">
         <v-icon left>mdi-refresh-circle</v-icon> Reload
       </v-btn>
@@ -35,7 +35,7 @@
       </v-text-field>
       <v-spacer></v-spacer>
       <div class="APIcall_container pc600">
-        <v-btn color="primary" @click="exe(1)" width="247px" height="50px" class="font-weight-bold float-right"
+        <v-btn color="primary" @click="exe" width="247px" height="50px" class="font-weight-bold float-right"
           :disabled="wait">
           <v-icon left>mdi-refresh-circle</v-icon> Reload
         </v-btn>
@@ -44,7 +44,7 @@
       <div class="sp600">
         <v-row justify="center">
           <v-col>
-            <v-btn color="primary" @click="exe(1)" height="40px" class="font-weight-bold float-right" :disabled="wait"
+            <v-btn color="primary" @click="exe" height="40px" class="font-weight-bold float-right" :disabled="wait"
               block>
               <v-icon left>mdi-refresh-circle</v-icon> Reload
             </v-btn>
@@ -60,10 +60,30 @@
       </div>
 
     </v-card-title>
+
     <Loading class="loading" v-show="loadProgress"></Loading>
-    <v-data-table :sort-by="sortBy" :items-per-page=15 :headers="headers" :items="rate_data" :search="search"
-      fixed-header height="auto" class="elevation-1" :single-select="singleSelect" v-model="selected" show-select
-      item-key="name" sort-desc must-sort></v-data-table>
+    <v-data-table
+    :sort-by="sortBy"
+    :items-per-page=15
+    :headers="headers"
+    :items="rate_data"
+    :search="search"
+    fixed-header
+    height="auto" class="elevation-1"
+    :single-select="singleSelect"
+    v-model="selected"
+    show-select
+    item-key="name"
+    :footer-props="footerProps"
+    sort-desc must-sort>
+    <template v-slot:[`item.next`]="{ item }">
+      <span v-if="item.next=='loading'">
+        <v-progress-circular indeterminate color="white" size="20" width="2"></v-progress-circular>
+      </span>
+      <span v-else class="ok">{{item.next}}</span>
+    </template>
+    </v-data-table>
+
   </v-card>
 
 </div>
@@ -73,7 +93,6 @@
 import axios from "axios"
 import Loading from '@/components/Loading';
 import OreChart from "./OreChart.js";
-import apiurl from "@/assets/apiurl.csv";
 
 export default {
   name: "API",
@@ -81,6 +100,8 @@ export default {
     return {
       search: '',
       resurl: "",
+      nexturl:"",
+      key:null,
       headers: [{
           text: 'Pair',
           align: 'start',
@@ -121,9 +142,9 @@ export default {
         "rate": [0, 0, 0, 0]
       }],
       datacollection: { labels:[], datasets: [] },
-      //datacollection: null,
       options: null,
-      sortBy: 'next'
+      sortBy: 'h8_sum',
+      footerProps: {'items-per-page-options': [10,20,30,50,-1]},
     }
   },
   components: {
@@ -131,16 +152,13 @@ export default {
     OreChart,
   },
   created() {
-    //this.resurl = apiurl[0][0];
-    this.resurl = apiurl[0][1];
+    this.resurl = process.env.VUE_APP_URL
+    this.nexturl = process.env.VUE_APP_NEXT
+    this.key=process.env.VUE_APP_KEY
   },
   async mounted() {
     await this.exe();
-    const ck = document.getElementsByClassName('v-data-table__checkbox');
-    //console.log("koko" + ck[0]);
-    if(ck){
-      ck[0].click();
-    }
+    this.click_1()
   },
   computed: {
     pair_name() {
@@ -172,35 +190,54 @@ export default {
     }
   },
   methods: {
+    async get_db(url){
+      let res
+      const header={"Key":this.key}
+      await axios.get(url, { headers: header })
+      .then(response => {
+        res = response.data
+      })
+      .catch(error => {
+        console.log(error);
+        res=null
+      })
+      return res
+    },
+    get_next(){
+      this.rate_data.map(async r=>{
+        const url=this.nexturl+"?name="+r.name
+        const res=await this.get_db(url)
+        r.next=(res)? res[r.name] : "error" ;
+        return r
+      })
+    },
     async exe() {
       this.error = false;
       this.wait = true;
       this.rate_data = [];
-      // $emit >> 任意のタイミングでイベントを発生させる
       this.$emit("loadStart")
       this.loadProgress = true;
-      var url = this.resurl;
-      await axios.get(url)
-        .then(response => {
-          this.get = response.data,
-            this.count = Object.keys(response.data).length;
-          if (this.count > 1) {
-            for (let i = 0; i < this.count; i++) {
-              this.rate_data.push(this.get[i])
-            }
-          }
-        })
-        .catch(error => {
-          console.log(error);
-          this.wait = false
-          this.loadProgress = false;
-          this.error = true;
-        })
-
-      window.scrollTo(0, 50);
+      const res=await this.get_db(this.resurl)
+      if(res){
+        const count = Object.keys(res).length;
+        if (count > 1) {
+          this.rate_data=res
+        }
+        this.get_next()
+      }else{
+        this.wait = false
+        this.loadProgress = false;
+        this.error = true;
+      }
+      //window.scrollTo({top: 20,behavior: "smooth"});
       this.loadProgress = false;
-
       setTimeout(() => (this.wait = false), 1000);
+    },
+    click_1(){
+      const ck = document.getElementsByClassName('v-data-table__checkbox');
+      if(ck){
+        ck[0].click();
+      }
     },
     fillData() {
       window.scrollTo(0, 50);
@@ -264,9 +301,6 @@ export default {
       console.log(tgt)
       tgt[0].click();
     },
-    convertCsvStringToArray(str) {
-      return str.split("\n").map(s => s.split(","));
-    }
   },
 };
 </script>

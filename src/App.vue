@@ -49,7 +49,6 @@
           <v-tab>Basis & FR</v-tab>
         </v-tabs>
 
-      <API_copy v-if="test==true"></API_copy>
       <API v-show="tab==0"></API>
       <Basis v-show="tab==1"></Basis>
     </v-main>
@@ -64,7 +63,6 @@
 
 <script>
 import API from './components/API';
-import API_copy from './components/API_copy';
 import Bottom from './components/Bottom';
 import Basis from '@/components/Basis';
 export default {
@@ -73,7 +71,6 @@ export default {
   components: {
     API,
     Bottom,
-    API_copy,
     Basis
   },
   data() {
