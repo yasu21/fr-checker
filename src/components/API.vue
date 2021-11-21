@@ -20,10 +20,10 @@
 
     <v-card-title>
       <div class="pc">
-        <span class="green2 pc">
+        <span class="green2 pc" @click="switch_pc">
           <v-icon small>mdi-arrow-up</v-icon>Low to High
         </span>
-        <span class="red2 pc">
+        <span class="red2 pc" @click="switch_pc">
           <v-icon small>mdi-arrow-down</v-icon>High to Low
         </span>
         <br>
@@ -50,7 +50,7 @@
             </v-btn>
           </v-col>
           <v-col>
-            <v-btn color="#ee6560" @click="switchon" class="font-weight-bold" block height="40px">
+            <v-btn color="#ee6560" @click="switch_sp" class="font-weight-bold" block height="40px">
               <v-icon small>mdi-arrow-up</v-icon>
               <v-icon small left>mdi-arrow-down</v-icon>
               Switch DESC and ASC
@@ -107,6 +107,7 @@ export default {
           align: 'start',
           sortable: true,
           value: 'name',
+          width:"18%",
         },
         {
           text: 'Next',
@@ -214,7 +215,7 @@ export default {
     async exe() {
       this.error = false;
       this.wait = true;
-      this.rate_data = [];
+      //this.rate_data = [];
       this.$emit("loadStart")
       this.loadProgress = true;
       const res=await this.get_db(this.resurl)
@@ -296,10 +297,15 @@ export default {
         }
       }
     },
-    switchon() {
-      var tgt = document.getElementsByClassName("v-chip__content");
-      console.log(tgt)
-      tgt[0].click();
+    switch_pc(){
+      let tgt = document.getElementsByClassName("active desc");
+      (tgt.length>0)? tgt[0].click() : null;
+      tgt = document.getElementsByClassName("active asc");
+      (tgt.length>0)? tgt[0].click() : null;
+    },
+    switch_sp() {
+      let tgt = document.getElementsByClassName("v-chip__content");
+      (tgt.length>0)? tgt[0].click() : null;
     },
   },
 };
@@ -360,12 +366,14 @@ export default {
   margin-right: 10px;
   padding: 3px 10px 3px 5px;
   font-size: 16px !important;
+  cursor: pointer;
 }
 
 .red2 {
   background: #ee6560 !important;
   padding: 3px 10px 3px 5px;
   font-size: 16px !important;
+  cursor: pointer;
 }
 
 @media screen and (min-width:780px) {
